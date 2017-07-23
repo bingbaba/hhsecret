@@ -5,10 +5,19 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"time"
 )
+
+var (
+	random *rand.Rand
+)
+
+func init() {
+	random = rand.New(rand.NewSource(time.Now().Unix()))
+}
 
 type ListSignResp struct {
 	Success   bool           `json:"success"`
@@ -32,12 +41,14 @@ func (client *Client) Sign() (*ListSingnData, error) {
 	}
 	path := fmt.Sprintf("/snsapi/%s/attendance/sign.json?"+url_param.Encode(), client.LoginData.OrgInfoId)
 
+	lat := fmt.Sprintf("%0.6f", 36.130+random.Float64()/1000)
+	lng := fmt.Sprintf("%0.6f", 120.416+random.Float64()/1000)
 	form := url.Values{
 		"newFlag":   {"newFlag"},
 		"account":   {client.LoginInfo.userName},
 		"mid":       {"102"},
-		"latitude":  {"36.130142"},
-		"longitude": {"120.416557"},
+		"latitude":  {lat},
+		"longitude": {lng},
 		"deviceId":  {client.LoginInfo.devid},
 	}
 	req, err := client.newHttpReq("POST", path, form)
