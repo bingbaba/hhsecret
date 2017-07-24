@@ -12,8 +12,8 @@ var (
 )
 
 func TestListSign(t *testing.T) {
-	username := os.Getenv("USERNAME")
-	password := os.Getenv("PASSWORD")
+	username := os.Getenv("HH_USERNAME")
+	password := os.Getenv("HH_PASSWORD")
 	if username != "" && password != "" {
 		client := NewClient(username, password, TEST_CONSUMER_KEY, TEST_CONSUMER_SECRET)
 		err := client.Login()
@@ -31,8 +31,8 @@ func TestListSign(t *testing.T) {
 }
 
 func TestSign(t *testing.T) {
-	username := os.Getenv("USERNAME")
-	password := os.Getenv("PASSWORD")
+	username := os.Getenv("HH_USERNAME")
+	password := os.Getenv("HH_PASSWORD")
 	if username != "" && password != "" {
 		client := NewClient(username, password, TEST_CONSUMER_KEY, TEST_CONSUMER_SECRET)
 		err := client.Login()
