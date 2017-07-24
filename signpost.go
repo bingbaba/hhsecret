@@ -19,6 +19,31 @@ func init() {
 	random = rand.New(rand.NewSource(time.Now().Unix()))
 }
 
+type SignResp struct {
+	Success   bool       `json:"success"`
+	Error     string     `json:"errorMessage"`
+	ErrorCode int        `json:"errorCode"`
+	Data      *SingnData `json:"data"`
+}
+
+type SingnData struct {
+	Id            string   `json:"id"`
+	AttendSetId   string   `json:"attendSetId"`
+	Datetime      int64    `json:"datetime"`
+	Longitude     float64  `json:"longitude"`
+	Latitude      float64  `json:"latitude"`
+	Featurename   string   `json:"featurename"`
+	Content       string   `json:"content"`
+	Status        int      `json:"status"`
+	MbShare       string   `json:"mbShare"`
+	PhotoIds      []string `json:"photoIds"`
+	ClockInType   string   `json:"clockInType"`
+	ExtraRemark   string   `json:"extraRemark"`
+	Systime       string   `json:"systime"`
+	MessageByTime string   `json:"messageByTime"`
+	Email         string   `json:"email"`
+}
+
 type ListSignResp struct {
 	Success   bool           `json:"success"`
 	Error     string         `json:"errorMessage"`
@@ -34,12 +59,13 @@ type ListSingnData struct {
 
 type Sign map[string]interface{}
 
-func (client *Client) Sign() (*ListSingnData, error) {
-	url_param := url.Values{
-		"time":   {time.Now().Format("2006-01-02 15:04:05")},
-		"source": {client.oauthClient.Credentials.Token}, //consumer_key
-	}
-	path := fmt.Sprintf("/snsapi/%s/attendance/sign.json?"+url_param.Encode(), client.LoginData.OrgInfoId)
+func (client *Client) Sign() (*SingnData, error) {
+	// url_param := url.Values{
+	// 	"time":   {time.Now().Format("20060102150405")},
+	// 	"source": {client.oauthClient.Credentials.Token}, //consumer_key
+	// }
+	// path := fmt.Sprintf("/snsapi/%s/attendance/sign.json?"+url_param.Encode(), client.LoginData.OrgInfoId)
+	path := fmt.Sprintf("/snsapi/%s/attendance/sign.json", client.LoginData.OrgInfoId)
 
 	lat := fmt.Sprintf("%0.6f", 36.130+random.Float64()/1000)
 	lng := fmt.Sprintf("%0.6f", 120.416+random.Float64()/1000)
@@ -66,18 +92,19 @@ func (client *Client) Sign() (*ListSingnData, error) {
 	if err != nil {
 		return nil, err
 	}
+	// fmt.Printf("%s\n", data)
 
-	lsr := &ListSignResp{}
-	err = json.Unmarshal(data, lsr)
+	sr := &SignResp{}
+	err = json.Unmarshal(data, sr)
 	if err != nil {
 		return nil, err
 	}
 
-	if !lsr.Success {
-		return nil, errors.New(lsr.Error)
+	if !sr.Success {
+		return nil, errors.New(sr.Error)
 	}
 
-	return lsr.Data, nil
+	return sr.Data, nil
 }
 
 func (client *Client) ListSignPost() (*ListSingnData, error) {
