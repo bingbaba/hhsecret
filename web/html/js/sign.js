@@ -49,6 +49,15 @@ function signHandle(){
         titile_prefix = "您今天还尚未打卡"
     }
 
+    if(signs.length >= 2){
+        start_time = new Date(signs[signs.length-1].datetime).Format("HH:mm");
+        end_time = new Date(signs[0].datetime).Format("HH:mm");
+        if(start_time <= "09:00" && end_time >= "17:30"){
+            weui.toast("您已正常上下班",2000);
+            return;
+        }
+    }
+
     weui.confirm(titile_prefix+'，请确认是否继续打卡？', {
         title: "打卡操作确认",
         buttons: [{
