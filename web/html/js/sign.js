@@ -116,7 +116,7 @@ function refresh(){
             },
             error: function(){
                 loading.hide()
-                console.log("list sign error!")
+                weui.topTips("获取打卡记录失败", 5000);
             }
         });
 
