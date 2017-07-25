@@ -13,6 +13,7 @@ type Configure struct {
 	ConsumerKey    string   `yaml:"consumer_key"`
 	ConsumerSecret string   `yaml:"consumer_secret"`
 	UserWhiteList  []string `yaml:"UserWhiteList"`
+	StaticWebPath  string   `yaml:"staticWebPath"`
 }
 
 func init() {

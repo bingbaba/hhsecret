@@ -4,3 +4,4 @@ consumer_key: lRudaAEghEJGEHkw
 consumer_secret: 0QNOWUHsWcI9i8UyqBFKUarayqBDUsVnxJrumYHEUl
 UserWhiteList:
   - 01462834
+staticWebPath: /Users/xuebing/WorkSpace/go/src/github.com/bingbaba/hhsecret/web/html

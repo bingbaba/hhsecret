@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+        <title>懒人打卡登陆</title>
+        
+        <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+        <link rel="stylesheet" href="css/weui.min.css"/>
+        <script type="text/javascript" src="js/weui.min.js"></script>
+        <script src="js/util.js"></script>
+
+        <link rel="stylesheet" href="css/myui.css"/>
+        <link rel="shortcut icon" href="images/sign.png" >
+        <link rel="apple-touch-icon" href="images/sign.png">
+    </head>
+    <body>
+        <script src="js/login.js"></script>
+
+        <div class="hd">
+            <h1 class="page_title">用户登录</h1>
+            <p class="page_desc">请先登录再签到</p>
+        </div>
+        <div class="bd">
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">用户名</label></div>
+                    <div class="weui-cell__bd">
+                        <input id="username" class="weui-input" type="number" pattern="a?[0-9]{8}" placeholder="请输入员工编号"/>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">密码</label></div>
+                    <div class="weui-cell__bd">
+                        <input id="password" class="weui-input" type="password" placeholder="请输入密码"/>
+                    </div>
+                </div>
+                <div class="weui-btn-area">
+                    <a id= "login" href="javascript:loginHandle()" class="weui-btn weui-btn_primary">登录</a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

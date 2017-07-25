@@ -26,11 +26,26 @@ func UserWhiteList(ctx context.Context) {
 	ctx.JSON(NewResponseWithErr(ERROR_USER_NOTALLOW, nil))
 }
 
+func UserLoginCheckHander(ctx context.Context) {
+	var result = make(map[string]string)
+	username := ctx.Params().Get("username")
+	client, found := GetClientByUser(username)
+	if !found {
+		ctx.JSON(NewResponseWithErr(ERROR_USER_NOTLOGIN, result))
+	} else {
+		result["name"] = client.LoginData.Name
+		ctx.JSON(NewResponse(result))
+	}
+}
+
 func UserLoginHander(ctx context.Context) {
 	var err error
 	var result interface{}
 	username := ctx.Params().Get("username")
 	defer func() {
+		if err != nil {
+			logger.Errorf("%s login failed:", username, err)
+		}
 		ctx.JSON(NewResponseWithErr(err, result))
 	}()
 
@@ -74,6 +89,9 @@ func UserSignHander(ctx context.Context) {
 	var result interface{}
 	username := ctx.Params().Get("username")
 	defer func() {
+		if err != nil {
+			logger.Errorf("%s sign failed:", username, err)
+		}
 		ctx.JSON(NewResponseWithErr(err, result))
 	}()
 

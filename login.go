@@ -13,7 +13,7 @@ import (
 
 var (
 	URL_LOGIN     = "http://hdxtapp.haier.net/openaccess/user/login"
-	FMT_LOGININFO = `{"eid":"","userName":"%s","password":"%s","appClientId":"10201","deviceId":"%s","deviceType":"%s","ua":"%s"}`
+	FMT_LOGININFO = `{"eid":"102","userName":"%s","password":"%s","appClientId":"10201","deviceId":"%s","deviceType":"%s","ua":"%s"}`
 )
 
 type LoginResp struct {
@@ -83,7 +83,7 @@ func NewLoginInfo(username, password string) *LoginInfo {
 	l := &LoginInfo{
 		userName:  username,
 		password:  password_encrypt_str,
-		devtype:   "MHA-AL00 Build/HUAWEIMHA-AL00",
+		devtype:   "HUAWEIMHA",
 		useragent: "Linux; Android 7.0; MHA-AL00 Build/HUAWEIMHA-AL00; wv",
 	}
 	l.setDevID()
