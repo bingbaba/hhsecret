@@ -33,8 +33,7 @@ func UserLoginCheckHander(ctx context.Context) {
 	if !found {
 		ctx.JSON(NewResponseWithErr(ERROR_USER_NOTLOGIN, result))
 	} else {
-		result["name"] = client.LoginData.Name
-		ctx.JSON(NewResponse(result))
+		ctx.JSON(NewResponse(client.LoginData))
 	}
 }
 
@@ -119,5 +118,19 @@ func UserListSignHander(ctx context.Context) {
 	}
 
 	result, err = client.ListSignPost()
+	return
+}
+
+func UserMonthSignHandler(ctx context.Context) {
+	username := ctx.Params().Get("username")
+	year := ctx.Params().Get("year")
+	month := ctx.Params().Get("month")
+
+	var ms *hhsecret.MonthSign
+	var err error
+	defer func() {
+		ctx.JSON(NewResponseWithErr(err, ms))
+	}()
+	ms, err = hhsecret.GetMonthSign(username, year, month)
 	return
 }

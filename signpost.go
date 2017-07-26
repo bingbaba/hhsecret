@@ -141,3 +141,30 @@ func (client *Client) ListSignPost() (*ListSingnData, error) {
 
 	return lsr.Data, nil
 }
+
+type MonthSign struct {
+	Sign  string `json:"sign"`
+	Array string `json:"arr"`
+}
+
+func GetMonthSign(username, year, month string) (*MonthSign, error) {
+	url_req := fmt.Sprintf("http://60.209.105.243:8081/ashx/rili.ashx?ty=%s&tm=%s&empnumber=%s", year, month, username)
+	resp, err := http.DefaultClient.Get(url_req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	ms := &MonthSign{}
+	err = json.Unmarshal(data, ms)
+	if err != nil {
+		return nil, err
+	}
+
+	return ms, nil
+}

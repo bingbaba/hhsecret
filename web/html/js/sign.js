@@ -129,41 +129,80 @@ function _sign(){
 
 function refresh(){
     //logined
-    if(localStorage.name != undefined) {
-        var name = localStorage.name;
-        var username = localStorage.username;
-        $("#myname").text(name+"("+username+")");
+    var name = localStorage.name;
+    var username = localStorage.username;
+    $("#myname").text(name);
 
-        var loading = weui.loading('加载中');
-        $.ajax({
-            type: 'GET',
-            url: "/api/user/"+username+"/sign",
-            dataType: "json",
-            success: function(data){
-                console.log("list sign suc!");
-                
-                loading.hide();
+    var loading = weui.loading('加载中');
+    $.ajax({
+        type: 'GET',
+        url: "/api/user/"+username+"/sign",
+        dataType: "json",
+        success: function(data){
+            console.log("list sign suc!");
+            
+            loading.hide();
 
-                if(data.msg == "user not login"){
-                    location = 'login.html?redo=1';
-                }else if(data.msg == "OK") {
-                    renderListSign(data.data);
-                }else {
-                    weui.alert(data.msg);
-                }
-            },
-            error: function(){
-                loading.hide()
-                weui.topTips("获取打卡记录失败", 5000);
+            if(data.msg == "user not login"){
+                location = 'login.html?redo=1';
+            }else if(data.msg == "OK") {
+                renderListSign(data.data);
+            }else {
+                weui.alert(data.msg);
             }
-        });
+        },
+        error: function(){
+            loading.hide()
+            weui.topTips("获取打卡记录失败", 5000);
+        }
+    });
 
-        // 
-    }else {
-        window.location.href = 'login.html';
-    }
+}
+
+function getCurMonthSign(){
+    date = new Date();
+    year = date.getYear()+1900;
+    month = date.getMonth()+1;
+    username = localStorage.username;
+
+    $.ajax({
+        type: 'GET',
+        url: "/api/user/"+username+"/sign/month/"+year+"/"+month,
+        dataType: "json",
+        success: function(data){
+            console.log("list month sign suc!");
+            console.log(data);
+            if(data.msg == "OK") {
+                array = data.data.arr.split(";")
+                var execptionNum = 0;
+                for (var i = array.length - 1; i >= 0; i--) {
+                    if(array[i] == ""){
+                        continue;
+                    }else if(array[i].indexOf("迟到") >= 0 ||
+                        array[i].indexOf("缺勤") >= 0 
+                    ){
+                        execptionNum++;
+                        console.log(month+"月"+i+"号: "+array[i]);
+                    }
+                }
+                if(execptionNum > 0){
+                    $("#exceptionSign").text("您本月有"+execptionNum+"次考勤异常，点击查看");
+                }
+            }else {
+                weui.alert(data.msg);
+            }
+        },
+        error: function(){
+            weui.topTips("获取本月打卡记录失败", 5000);
+        }
+    });
 }
 
 $(function () {
-    refresh();
+    if(localStorage.name != undefined) {
+        refresh();
+    }else {
+        window.location.href = 'login.html';
+    }
+    getCurMonthSign();
 });

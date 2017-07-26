@@ -39,6 +39,8 @@ function login(username, password){
     if(resp.msg == "OK"){
         localStorage.username = username;
         localStorage.name = resp.data.name;
+        localStorage.jobTitle = resp.data.jobTitle;
+        localStorage.photoUrl = resp.data.photoUrl;
         return true
     }else {
         weui.topTips(resp.msg, 5000);
@@ -60,6 +62,8 @@ function checkLogined() {
     }).responseJSON;
 
     if(resp.data.name != undefined && resp.data.name != ""){
+        localStorage.jobTitle = resp.data.jobTitle;
+        localStorage.photoUrl = resp.data.photoUrl;
         return true
     }else {
         return false

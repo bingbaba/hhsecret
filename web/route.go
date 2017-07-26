@@ -12,6 +12,7 @@ func GetIrisApp() (app *iris.Application) {
 	app.Get("/api/user/{username}/login", UserWhiteList, UserLoginCheckHander)
 	app.Post("/api/user/{username}/sign", UserWhiteList, UserSignHander)
 	app.Get("/api/user/{username}/sign", UserWhiteList, UserListSignHander)
+	app.Get("/api/user/{username}/sign/month/{year}/{month}", UserWhiteList, UserMonthSignHandler)
 
 	// static web
 	app.StaticWeb("/html", DefaultCfg.StaticWebPath)
