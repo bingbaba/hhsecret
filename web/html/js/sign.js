@@ -22,40 +22,61 @@ var tmpl_sign = '<div class="weui-form-preview sign_info">'+
 var signs = [];
 function renderListSign(data){
     signs = data.signs;
-    var max_i = data.signs.length-1;
+    if(signs == undefined){
+        return;
+    }
 
+    var max_i = data.signs.length-1;
     $(".sign_info").remove();
     for (var i = max_i; i >= 0; i--) {
-        var signtype, time_str, location, lat, lng;
-        if(i==max_i) {
-            signtype = "上班";
-        }else {
-            signtype = "下班";
-        }
-        time_str = new Date(data.signs[i].datetime).Format("HH:mm");
-        location = data.signs[i].featurename;
-        lat = data.signs[i].latitude;
-        lng = data.signs[i].longitude;
+        appendToListSign(data.signs[i])
+        // var signtype, time_str, location, lat, lng;
+        // if(i==max_i) {
+        //     signtype = "上班";
+        // }else {
+        //     signtype = "下班";
+        // }
+        // time_str = new Date(data.signs[i].datetime).Format("HH:mm");
+        // location = data.signs[i].featurename;
+        // lat = data.signs[i].latitude;
+        // lng = data.signs[i].longitude;
 
-        $("#sign_btn").before(tmpl_sign.format(signtype, time_str, location, lat, lng))
+        // $("#sign_btn").before(tmpl_sign.format(signtype, time_str, location, lat, lng))
     }
+}
+
+function appendToListSign(data){
+    var i = $(".sign_info").length;
+    var signtype, time_str, location, lat, lng;
+    if(i == 0) {
+        signtype = "上班";
+    }else {
+        signtype = "下班";
+    }
+
+    time_str = new Date(data.datetime).Format("HH:mm");
+    location = data.featurename;
+    lat = data.latitude;
+    lng = data.longitude;
+
+    $("#sign_btn").before(tmpl_sign.format(signtype, time_str, location, lat, lng));
 }
 
 function signHandle(){
     var titile_prefix = "";
-    if(signs.length > 0){
-        titile_prefix = "您今天已打卡"+signs.length+"次"
+    if(signs != undefined && signs.length > 0){
+        titile_prefix = "您今天已打卡"+signs.length+"次";
+
+        if(signs.length >= 2){
+            start_time = new Date(signs[signs.length-1].datetime).Format("HH:mm");
+            end_time = new Date(signs[0].datetime).Format("HH:mm");
+            if(start_time <= "09:00" && end_time >= "17:30"){
+                weui.toast("您已正常上下班",2000);
+                return;
+            }
+        }
     }else {
         titile_prefix = "您今天还尚未打卡"
-    }
-
-    if(signs.length >= 2){
-        start_time = new Date(signs[signs.length-1].datetime).Format("HH:mm");
-        end_time = new Date(signs[0].datetime).Format("HH:mm");
-        if(start_time <= "09:00" && end_time >= "17:30"){
-            weui.toast("您已正常上下班",2000);
-            return;
-        }
     }
 
     weui.confirm(titile_prefix+'，请确认是否继续打卡？', {
@@ -67,12 +88,7 @@ function signHandle(){
             label: '坚持打卡',
             type: 'primary',
             onClick: function(){
-                
-                sign_flag = _sign()
-                
-                if(sign_flag) {
-                    refresh();
-                }
+                _sign()
             }
         }]
     });
@@ -90,12 +106,25 @@ function _sign(){
 
     loading.hide();
     if(resp.msg == "OK") {
-        weui.toast('打卡成功', 2000);
-        return true;
+        if(resp.data.status == 1){
+            weui.toast('打卡成功', 2000);
+            if(signs == undefined){
+                signs = [resp.data];
+            }else {
+                signs.push(resp.data);
+            }
+            appendToListSign(resp.data);
+            return true;
+        }else {
+            weui.topTips(resp.data.content, 5000);
+            return false
+        }
     }else {
         weui.topTips(resp.msg, 5000);
         return false;
     }
+
+    return false;
 }
 
 function refresh(){
