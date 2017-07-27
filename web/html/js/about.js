@@ -29,7 +29,8 @@ function getCurMonthSign(){
                         array[i].indexOf("缺勤") >= 0 
                     ){
                         execptionNum++;
-                        var esign = tmpl_exception_sign.format(month+"月"+i+"号", array[i]);
+                        var day = i+1;
+                        var esign = tmpl_exception_sign.format(month+"月"+day+"号", array[i]);
                         $("#exceptionSigns").append(esign);
                     }
                 }

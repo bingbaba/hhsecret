@@ -182,7 +182,8 @@ function getCurMonthSign(){
                         array[i].indexOf("缺勤") >= 0 
                     ){
                         execptionNum++;
-                        console.log(month+"月"+i+"号: "+array[i]);
+                        var day = i+1;
+                        console.log(month+"月"+day+"号: "+array[i]);
                     }
                 }
                 if(execptionNum > 0){
