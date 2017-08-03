@@ -15,4 +15,4 @@ RUN cp web/cmd/conf.yml /etc/hhsecret/conf.yml
 RUN go build -o $GOBIN/hhsecret web/cmd/main.go
 
 EXPOSE 8003
-CMD ["hhsecret", "-c", "/etc/hhsecret/conf.yml"]
+CMD ["$GOBIN/hhsecret", "-c", "/etc/hhsecret/conf.yml"]
