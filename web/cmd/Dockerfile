@@ -7,6 +7,7 @@ RUN cp -f /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN mkdir -p /go/src/github.com/bingbaba/hhsecret
 RUN cp -r /go/src/app/* $GOPATH/src/github.com/bingbaba/hhsecret
 
+# example config
 # RUN mkdir /etc/hhsecret
 # RUN cp web/cmd/conf.yml /app/conf.yml
 
@@ -20,4 +21,4 @@ RUN cp -r /go/src/app/web/html /app/
 
 EXPOSE 8003
 WORKDIR /app
-CMD ["/app/hhsecret", "-c", "/app/conf.yml"]
+CMD ["/app/hhsecret", "-c", "/etc/hhsecret/conf.yml"]
