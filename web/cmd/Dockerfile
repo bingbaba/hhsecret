@@ -9,6 +9,7 @@ RUN cd /go/src/github.com/bingbaba/hhsecret
 
 RUN mkdir /etc/hhsecret
 RUN cp web/cmd/conf.yml /etc/hhsecret/conf.yml
+RUN rm -rf ./vendor
 RUN go build -o hhsecret web/cmd/main.go
 
 EXPOSE 8003
