@@ -6,6 +6,7 @@ RUN cp -f /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 # move to GOPATH
 RUN mkdir -p /go/src/github.com/bingbaba/hhsecret
 RUN cp -r /go/src/app/* $GOPATH/src/github.com/bingbaba/hhsecret
+RUN rm -rf /go/src/app/vendor
 
 # RUN mkdir /etc/hhsecret
 # RUN cp web/cmd/conf.yml /app/conf.yml
