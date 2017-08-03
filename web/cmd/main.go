@@ -27,6 +27,12 @@ func main() {
 	mconf := web.DefaultCfg
 	web.InitLogger(mconf.LogFile, *Debug)
 
+	// sign check and notice
+	err = web.SignCheckLoop(mconf.DingTalkConfigure, mconf.UserWhiteList)
+	if err != nil {
+		panic(err)
+	}
+
 	// iris
 	app := web.GetIrisApp()
 

@@ -57,7 +57,16 @@ type ListSingnData struct {
 	Count     int     `json:"count"`
 }
 
-type Sign map[string]interface{}
+type Sign struct {
+	DateTime  int64   `json:"datetime"`
+	Location  string  `json:"featurename"`
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+}
+
+func (s *Sign) GetMinuteSecode() string {
+	return time.Unix(s.DateTime/1000, 0).Format("15:04")
+}
 
 func (client *Client) Sign() (*SingnData, error) {
 	// url_param := url.Values{
