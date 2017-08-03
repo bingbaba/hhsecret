@@ -1,9 +1,11 @@
 FROM golang:1.8.3-onbuild
 MAINTAINER Xue Bing <xuebing1110@gmail.com>
 
-#EXPOSE 1318
+RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN mkdir /etc/hhsecret
+RUN cp web/cmd/conf.yml /etc/hhsecret/conf.yml
+RUN go build -o hhsecret web/cmd/main.go
 
-RUN cd web/cmd
-RUN go build -o hhsecret ./main.go
 
-CMD ["hhsecret", "-c", "./conf.yml"]
+EXPOSE 8003
+CMD ["hhsecret", "-c", "/etc/hhsecret/conf.yml"]
