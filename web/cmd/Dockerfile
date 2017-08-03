@@ -12,7 +12,7 @@ WORKDIR $GOPATH/src/github.com/bingbaba/hhsecret
 
 RUN mkdir /etc/hhsecret
 RUN cp web/cmd/conf.yml /etc/hhsecret/conf.yml
-RUN go build -o $GOBIN/hhsecret web/cmd/main.go
+RUN go build -o /usr/local/go/bin/hhsecret web/cmd/main.go
 
 EXPOSE 8003
-CMD ["$GOBIN/hhsecret", "-c", "/etc/hhsecret/conf.yml"]
+CMD ["hhsecret", "-c", "/etc/hhsecret/conf.yml"]
