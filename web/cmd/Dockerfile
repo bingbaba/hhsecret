@@ -7,8 +7,8 @@ RUN cp -f /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN mkdir -p /go/src/github.com/bingbaba/hhsecret
 RUN cp -r /go/src/app/* $GOPATH/src/github.com/bingbaba/hhsecret
 
-RUN mkdir /etc/hhsecret
-RUN cp web/cmd/conf.yml /etc/hhsecret/conf.yml
+# RUN mkdir /etc/hhsecret
+# RUN cp web/cmd/conf.yml /app/conf.yml
 RUN go build -o /app/hhsecret web/cmd/main.go
 
 # WORKDIR
