@@ -26,7 +26,7 @@ func SignCheckLoop(conf DingTalkConfigure, userlist []string) error {
 
 	c := cron.New()
 	c.AddFunc("0 50 8 * * 1,2,3,4,5", MorningSignCheck)
-	c.AddFunc("0 * 23 * * 1,2,3,4,5,6", AfternoonSignCheck)
+	c.AddFunc("0 0 19 * * 1,2,3,4,5", AfternoonSignCheck)
 	c.Start()
 
 	logger.Errorln("init checking...")
@@ -34,10 +34,11 @@ func SignCheckLoop(conf DingTalkConfigure, userlist []string) error {
 }
 
 func MorningSignCheck() {
+	logger.Infoln("morning checking...")
 	signCheck(false)
 }
 func AfternoonSignCheck() {
-	logger.Errorln("afternoon checking...")
+	logger.Infoln("afternoon checking...")
 	signCheck(true)
 }
 
@@ -58,8 +59,7 @@ func signCheck(afternoon bool) {
 				userid_notice = append(userid_notice, userid)
 			} else {
 				if afternoon {
-					max_i := len(lsd.Signs) - 1
-					mtime := lsd.Signs[max_i].GetMinuteSecode()
+					mtime := lsd.Signs[0].GetMinuteSecode()
 					if strings.Compare(mtime, "17:30") < 0 {
 						userid_notice = append(userid_notice, userid)
 					}
