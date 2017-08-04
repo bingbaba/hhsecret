@@ -7,7 +7,7 @@ RUN cp -f /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN mkdir -p /app
 RUN mkdir -p /go/src/github.com/bingbaba/hhsecret
 COPY . $GOPATH/src/github.com/bingbaba/hhsecret/
-COPY web/html /app/
+COPY web/html /app/html/
 WORKDIR $GOPATH/src/github.com/bingbaba/hhsecret
 
 # example config
