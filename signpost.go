@@ -142,7 +142,6 @@ func (client *Client) ListSignPost() (*ListSingnData, error) {
 	lsr := &ListSignResp{}
 	err = json.Unmarshal(data, lsr)
 	if err != nil {
-		err = fmt.Errorf("Unmarshal error:%v, data: %s", err, string(data))
 		return nil, err
 	}
 
@@ -174,7 +173,6 @@ func GetMonthSign(username, year, month string) (*MonthSign, error) {
 	ms := &MonthSign{}
 	err = json.Unmarshal(data, ms)
 	if err != nil {
-		err = fmt.Errorf("Unmarshal error:%v, data: %s", err, string(data))
 		return nil, err
 	}
 
