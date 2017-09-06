@@ -2,9 +2,12 @@ package web
 
 import (
 	"errors"
+	"io/ioutil"
+	"strings"
+	"time"
+
 	"github.com/bingbaba/hhsecret"
 	"github.com/kataras/iris/context"
-	"io/ioutil"
 )
 
 var (
@@ -133,4 +136,45 @@ func UserMonthSignHandler(ctx context.Context) {
 	}()
 	ms, err = hhsecret.GetMonthSign(username, year, month)
 	return
+}
+
+func NoticeHander(ctx context.Context) {
+	username := ctx.Params().Get("username")
+
+	var notice = false
+	var afternoon = false
+	if time.Now().Hour() >= 12 {
+		afternoon = true
+
+		// not send notice before 17:00
+		if time.Now().Hour() < 17 {
+			notice = false
+			ctx.JSON(NewResponse(notice))
+			return
+		}
+	}
+
+	client, found := GetClientByUser(username)
+	if !found {
+		ctx.JSON(NewResponseWithErr(errors.New("user not login"), false))
+		return
+	}
+
+	lsd, err := client.ListSignPost()
+	if err != nil {
+		ctx.JSON(NewResponseWithErr(err, nil))
+	} else {
+		if len(lsd.Signs) == 0 {
+			notice = true
+		} else {
+			if afternoon {
+				mtime := lsd.Signs[0].GetMinuteSecode()
+				if strings.Compare(mtime, "17:30") < 0 {
+					notice = true
+				}
+			}
+		}
+
+		ctx.JSON(NewResponse(notice))
+	}
 }
