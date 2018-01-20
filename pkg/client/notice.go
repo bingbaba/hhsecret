@@ -33,7 +33,7 @@ func IfNotice(uid string) (bool, error) {
 	snResp := new(SignNoticeResp)
 	err = json.Unmarshal(data, snResp)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("parse %s failed:%v", data, err)
 	}
 
 	if snResp.Code != 1000 {
