@@ -1,10 +1,12 @@
 package client
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
+	"fmt"
+	"io/ioutil"
 	"net/http"
-
-	"github.com/bingbaba/hhsecret"
 )
 
 const (
@@ -18,15 +20,15 @@ type LoginResp struct {
 }
 
 func Login(username, password string) error {
-	req_url := fmt.Sprintf(FMT_HRSIGN_LOGIN_URL, uid)
+	req_url := fmt.Sprintf(FMT_HRSIGN_LOGIN_URL, username)
 
-	req_map := map[string]string{"username": "", "password": ""}
-	body, err := json.Marshal(req_map)
+	req_map := map[string]string{"username": username, "password": password}
+	body_bytes, err := json.Marshal(req_map)
 	if err != nil {
 		return err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, req_url, body)
+	req, err := http.NewRequest(http.MethodPost, req_url, bytes.NewReader(body_bytes))
 	if err != nil {
 		return err
 	}
