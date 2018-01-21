@@ -18,7 +18,7 @@ type SignNoticeResp struct {
 }
 
 func IfNotice(uid string) (bool, error) {
-	real_url := fmt.Sprintf(FMT_HRSIGN_SIGNLIST_URL, uid)
+	real_url := fmt.Sprintf(FMT_HRSIGN_NOTICECHECK_URL, uid)
 	resp, err := HttpClient.Get(real_url)
 	if err != nil {
 		return false, err
