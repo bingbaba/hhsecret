@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/bingbaba/hhsecret"
 )
 
 const (
@@ -55,4 +57,36 @@ func Login(username, password string) error {
 	}
 
 	return nil
+}
+
+type LoginInfoResp struct {
+	Code int                 `json:"code"`
+	Msg  string              `json:"msg"`
+	Data *hhsecret.LoginData `json:"data"`
+}
+
+func GetLoginInfo(username string) (*hhsecret.LoginData, error) {
+	req_url := fmt.Sprintf(FMT_HRSIGN_LOGIN_URL, username)
+	resp, err := HttpClient.Get(req_url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	lResp := new(LoginInfoResp)
+	err = json.Unmarshal(data, lResp)
+	if err != nil {
+		return nil, fmt.Errorf("parse %s failed:%v", data, err)
+	}
+
+	if lResp.Code != 1000 {
+		return nil, errors.New(lResp.Msg)
+	}
+
+	return lResp.Data, nil
 }
