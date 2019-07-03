@@ -1,4 +1,26 @@
-FROM golang:1.12.6-alpine3.10
+FROM golang:1.12.6-alpine3.10 as build-env
+
+
+# move to GOPATH
+RUN mkdir -p /app
+WORKDIR /app
+
+# go mod
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+# build
+COPY . .
+RUN go build -o /app/hhsecret web/cmd/main.go
+
+# copy config
+COPY web/html /app/html/
+# RUN mkdir /etc/hhsecret
+# RUN cp web/cmd/conf.yml /app/conf.yml
+
+
+FROM alpine:3.10
 MAINTAINER Xue Bing <xuebing1110@gmail.com>
 
 # repo
@@ -13,21 +35,7 @@ RUN apk add --no-cache tzdata \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN apk add curl
 
-# move to GOPATH
-RUN mkdir -p /app
-#RUN mkdir -p /go/src/github.com/bingbaba/hhsecret
-#COPY . $GOPATH/src/github.com/bingbaba/hhsecret/
-COPY web/html /app/html/
-#WORKDIR $GOPATH/src/github.com/bingbaba/hhsecret
-
-# example config
-# RUN mkdir /etc/hhsecret
-# RUN cp web/cmd/conf.yml /app/conf.yml
-
-# build
-ENV GO111MODULE=on
-RUN go mod download
-RUN go build -o /app/hhsecret web/cmd/main.go
+COPY --from=build-env /app /app
 
 EXPOSE 8003
 WORKDIR /app
