@@ -24,8 +24,8 @@ RUN go build -o /app/hhsecret web/cmd/main.go
 
 # copy config
 COPY web/html /app/html/
-# RUN mkdir /etc/hhsecret
-# RUN cp web/cmd/conf.yml /app/conf.yml
+RUN mkdir /etc/hhsecret
+COPY web/cmd/conf.yml /app/conf.yml
 
 
 FROM alpine:3.10

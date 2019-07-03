@@ -69,7 +69,7 @@ type ListSingnData struct {
 }
 
 type Sign struct {
-	DateTime int64  `json:"datetime"`
+	DateTime int64  `json:"time"`
 	Location string `json:"feature"`
 	RecordId string `json:"recordId"`
 	PointId  string `json:"pointId"`
