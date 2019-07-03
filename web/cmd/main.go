@@ -3,10 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-
 	// "github.com/Sirupsen/logrus"
 	"github.com/bingbaba/hhsecret/web"
-	"github.com/kataras/iris"
 )
 
 var (
@@ -27,16 +25,14 @@ func main() {
 	mconf := web.DefaultCfg
 	web.InitLogger(mconf.LogFile, *Debug)
 
-	// sign check and notice
-	err = web.SignCheckLoop(mconf.DingTalkConfigure, mconf.UserWhiteList)
-	if err != nil {
-		panic(err)
-	}
+	//// sign check and notice
+	//err = web.SignCheckLoop(mconf.DingTalkConfigure, mconf.UserWhiteList)
+	//if err != nil {
+	//	panic(err)
+	//}
 
-	// iris
-	app := web.GetIrisApp()
-
-	addr := iris.Addr(fmt.Sprintf(":%d", mconf.Port))
+	app := web.GetApp()
+	addr := fmt.Sprintf(":%d", mconf.Port)
 	if err := app.Run(addr); err != nil {
 		panic(err)
 	}

@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	URL_LOGIN     = "http://hdxtapp.haier.net/openaccess/user/login"
-	FMT_LOGININFO = `{"eid":"102","userName":"%s","password":"%s","appClientId":"10201","deviceId":"%s","deviceType":"%s","ua":"%s"}`
+	URL_LOGIN     = "https://i.haier.net/openaccess/user/login"
+	FMT_LOGININFO = `{"eid":"102","userName":"%s","password":"%s","appClientId":"38882","deviceId":"%s","deviceType":"%s","ua":"%s"}`
 )
 
 type LoginResp struct {
@@ -41,7 +41,7 @@ type LoginData struct {
 	OauthToken       string   `json:"oauth_token"`
 	Name             string   `json:"name"`
 	WbUserId         string   `json:"wbUserId"`
-	Gender           int      `json:"gender"`
+	Gender           string   `json:"gender"`
 	FirstPinyin      string   `json:"firstPinyin"`
 	OfficePhone2     string   `json:"officePhone2"`
 	JobTitle         string   `json:"jobTitle"`
@@ -69,7 +69,7 @@ type LoginInfo struct {
 	userName  string
 	password  string
 	devid     string
-	devtype   string
+	device    *DeviceInfo
 	useragent string
 }
 
@@ -80,11 +80,13 @@ func NewLoginInfo(username, password string) *LoginInfo {
 	}
 
 	password_encrypt_str := base64.StdEncoding.EncodeToString(password_encrypt)
+	dev_info := GetDeviceInfo(username)
+	useragent := dev_info.UserAgent()
 	l := &LoginInfo{
 		userName:  username,
 		password:  password_encrypt_str,
-		devtype:   "HUAWEIMHA",
-		useragent: "Linux; Android 7.0; MHA-AL00 Build/HUAWEIMHA-AL00; wv",
+		device:    dev_info,
+		useragent: useragent,
 	}
 	l.setDevID()
 	return l
@@ -96,7 +98,7 @@ func (l *LoginInfo) Do() (*LoginData, error) {
 		return nil, err
 	}
 	req.Header.Set("User-Agent", l.useragent)
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -124,7 +126,7 @@ func (l *LoginInfo) Do() (*LoginData, error) {
 func (l *LoginInfo) ToString() string {
 	return fmt.Sprintf(FMT_LOGININFO,
 		l.userName, l.password,
-		l.devid, l.devtype,
+		l.devid, l.device.Model,
 		l.useragent)
 }
 

@@ -2,12 +2,12 @@ package web
 
 import (
 	"errors"
+	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"strings"
 	"time"
 
 	"github.com/bingbaba/hhsecret"
-	"github.com/kataras/iris/context"
 )
 
 var (
@@ -16,8 +16,8 @@ var (
 	ERROR_REQUIRE_PASSWD = errors.New("require password to login")
 )
 
-func UserWhiteList(ctx context.Context) {
-	username := ctx.Params().Get("username")
+func UserWhiteList(ctx *gin.Context) {
+	username := ctx.Param("username")
 	for _, un_tmp := range DefaultCfg.UserWhiteList {
 		if username == un_tmp {
 			ctx.Next()
@@ -25,36 +25,35 @@ func UserWhiteList(ctx context.Context) {
 		}
 	}
 
-	ctx.StatusCode(401)
-	ctx.JSON(NewResponseWithErr(ERROR_USER_NOTALLOW, nil))
+	ctx.JSON(401, NewResponseWithErr(ERROR_USER_NOTALLOW, nil))
 }
 
-func UserLoginCheckHander(ctx context.Context) {
+func UserLoginCheckHander(ctx *gin.Context) {
 	var result = make(map[string]string)
-	username := ctx.Params().Get("username")
+	username := ctx.Param("username")
 	client, found := GetClientByUser(username)
 	if !found {
-		ctx.JSON(NewResponseWithErr(ERROR_USER_NOTLOGIN, result))
+		ctx.JSON(200, NewResponseWithErr(ERROR_USER_NOTLOGIN, result))
 	} else {
-		ctx.JSON(NewResponse(client.LoginData))
+		ctx.JSON(200, NewResponse(client.LoginData))
 	}
 }
 
-func UserLoginHander(ctx context.Context) {
+func UserLoginHander(ctx *gin.Context) {
 	var err error
 	var result interface{}
-	username := ctx.Params().Get("username")
+	username := ctx.Param("username")
 	defer func() {
 		if err != nil {
 			logger.Errorf("%s login failed:", username, err)
 		}
-		ctx.JSON(NewResponseWithErr(err, result))
+		ctx.JSON(200, NewResponseWithErr(err, result))
 	}()
 
 	userInfo := make(map[string]string)
-	err = ctx.ReadJSON(&userInfo)
+	err = ctx.BindJSON(&userInfo)
 	if err != nil {
-		body, err2 := ioutil.ReadAll(ctx.Request().Body)
+		body, err2 := ioutil.ReadAll(ctx.Request.Body)
 		if err2 != nil {
 			err = err2
 			return
@@ -86,15 +85,15 @@ func UserLoginHander(ctx context.Context) {
 	return
 }
 
-func UserSignHander(ctx context.Context) {
+func UserSignHander(ctx *gin.Context) {
 	var err error
 	var result interface{}
-	username := ctx.Params().Get("username")
+	username := ctx.Param("username")
 	defer func() {
 		if err != nil {
 			logger.Errorf("%s sign failed:", username, err)
 		}
-		ctx.JSON(NewResponseWithErr(err, result))
+		ctx.JSON(200, NewResponseWithErr(err, result))
 	}()
 
 	client, found := GetClientByUser(username)
@@ -106,12 +105,12 @@ func UserSignHander(ctx context.Context) {
 	result, err = client.Sign()
 	return
 }
-func UserListSignHander(ctx context.Context) {
+func UserListSignHander(ctx *gin.Context) {
 	var err error
 	var result interface{}
-	username := ctx.Params().Get("username")
+	username := ctx.Param("username")
 	defer func() {
-		ctx.JSON(NewResponseWithErr(err, result))
+		ctx.JSON(200, NewResponseWithErr(err, result))
 	}()
 
 	client, found := GetClientByUser(username)
@@ -124,22 +123,22 @@ func UserListSignHander(ctx context.Context) {
 	return
 }
 
-func UserMonthSignHandler(ctx context.Context) {
-	username := ctx.Params().Get("username")
-	year := ctx.Params().Get("year")
-	month := ctx.Params().Get("month")
+func UserMonthSignHandler(ctx *gin.Context) {
+	username := ctx.Param("username")
+	year := ctx.Param("year")
+	month := ctx.Param("month")
 
 	var ms *hhsecret.MonthSign
 	var err error
 	defer func() {
-		ctx.JSON(NewResponseWithErr(err, ms))
+		ctx.JSON(200, NewResponseWithErr(err, ms))
 	}()
 	ms, err = hhsecret.GetMonthSign(username, year, month)
 	return
 }
 
-func NoticeHander(ctx context.Context) {
-	username := ctx.Params().Get("username")
+func NoticeHander(ctx *gin.Context) {
+	username := ctx.Param("username")
 
 	var notice = false
 	var afternoon = false
@@ -149,20 +148,20 @@ func NoticeHander(ctx context.Context) {
 		// not send notice before 17:00
 		if time.Now().Hour() < 17 {
 			notice = false
-			ctx.JSON(NewResponse(notice))
+			ctx.JSON(200, NewResponse(notice))
 			return
 		}
 	}
 
 	client, found := GetClientByUser(username)
 	if !found {
-		ctx.JSON(NewResponseWithErr(errors.New("user not login"), false))
+		ctx.JSON(200, NewResponseWithErr(errors.New("user not login"), false))
 		return
 	}
 
 	lsd, err := client.ListSignPost()
 	if err != nil {
-		ctx.JSON(NewResponseWithErr(err, nil))
+		ctx.JSON(200, NewResponseWithErr(err, nil))
 	} else {
 		if len(lsd.Signs) == 0 {
 			notice = true
@@ -175,6 +174,6 @@ func NoticeHander(ctx context.Context) {
 			}
 		}
 
-		ctx.JSON(NewResponse(notice))
+		ctx.JSON(200, NewResponse(notice))
 	}
 }

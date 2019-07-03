@@ -19,6 +19,17 @@ func init() {
 	random = rand.New(rand.NewSource(time.Now().Unix()))
 }
 
+type SignConfigResp struct {
+	Success   bool         `json:"success"`
+	Error     string       `json:"errorMessage"`
+	ErrorCode int          `json:"errorCode"`
+	Data      *SingnConfig `json:"data"`
+}
+
+type SingnConfig struct {
+	ConfigId string `json:"configId"`
+}
+
 type SignResp struct {
 	Success   bool       `json:"success"`
 	Error     string     `json:"errorMessage"`
@@ -58,35 +69,90 @@ type ListSingnData struct {
 }
 
 type Sign struct {
-	DateTime  int64   `json:"datetime"`
-	Location  string  `json:"featurename"`
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
+	DateTime int64  `json:"datetime"`
+	Location string `json:"feature"`
+	RecordId string `json:"recordId"`
+	PointId  string `json:"pointId"`
+	//Latitude  float64 `json:"latitude"`
+	//Longitude float64 `json:"longitude"`
 }
 
 func (s *Sign) GetMinuteSecode() string {
 	return time.Unix(s.DateTime/1000, 0).Format("15:04")
 }
 
-func (client *Client) Sign() (*SingnData, error) {
-	// url_param := url.Values{
-	// 	"time":   {time.Now().Format("20060102150405")},
-	// 	"source": {client.oauthClient.Credentials.Token}, //consumer_key
-	// }
-	// path := fmt.Sprintf("/snsapi/%s/attendance/sign.json?"+url_param.Encode(), client.LoginData.OrgInfoId)
-	path := fmt.Sprintf("/snsapi/%s/attendance/sign.json", client.LoginData.OrgInfoId)
+func (client *Client) signConfigId(lat, lng string) (string, error) {
+	configId := "5d007693ebf84b14e8287240_0"
 
-	lat := fmt.Sprintf("%0.6f", 36.130+random.Float64()/1000)
-	lng := fmt.Sprintf("%0.6f", 120.416+random.Float64()/1000)
+	// configId
 	form := url.Values{
-		"newFlag":   {"newFlag"},
-		"account":   {client.LoginInfo.userName},
-		"mid":       {"102"},
 		"latitude":  {lat},
 		"longitude": {lng},
-		"deviceId":  {client.LoginInfo.devid},
+		"networkId": {"5170b3ede4b0e5e16493be38"},
+		"userId":    {client.LoginData.OpenID},
 	}
-	req, err := client.newHttpReq("POST", path, form)
+	req, err := client.newHttpReq(
+		"POST",
+		"/attendance-signapi/config/inner/set/signConfig",
+		form)
+	if err != nil {
+		return configId, err
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return configId, err
+	}
+	defer resp.Body.Close()
+
+	scr := &SignConfigResp{}
+	err = json.NewDecoder(resp.Body).Decode(scr)
+	if err != nil {
+		err = fmt.Errorf("Unmarshal error:%v", err)
+		return configId, err
+	}
+
+	if !scr.Success {
+		return configId, errors.New(scr.Error)
+	}
+
+	if scr.Data != nil {
+		configId = scr.Data.ConfigId
+	}
+
+	return configId, nil
+}
+
+func (client *Client) Sign() (*SingnData, error) {
+	// lng=120.441031
+	// bssid=40%3A31%3A3c%3Adf%3Ad7%3A6a
+	// configId=5d007693ebf84b14e8287240_18
+	// networkId=5170b3ede4b035e16493be37
+	// userId=705ac0be-3557-11e7-86f4-44a842003fef
+	// ssid=bingbaba
+	// lat=36.181592
+
+	// location
+	lat := fmt.Sprintf("%0.6f", 36.128+random.Float64()/1000)
+	lng := fmt.Sprintf("%0.6f", 120.418+random.Float64()/1000)
+
+	configId, err := client.signConfigId(lat, lng)
+	if err != nil {
+		return nil, err
+	}
+
+	// sign in
+	form := url.Values{
+		"bssid":    {client.LoginInfo.device.GetMac(client.LoginInfo.userName)},
+		"configId": {configId},
+		"lat":      {lat},
+		"lng":      {lng},
+		"userId":   {client.LoginData.OpenID},
+		"ssid":     {""},
+	}
+	req, err := client.newHttpReq(
+		"POST",
+		"/attendance-signapi/signservice/sign/signIn",
+		form)
 	if err != nil {
 		return nil, err
 	}
@@ -97,16 +163,10 @@ func (client *Client) Sign() (*SingnData, error) {
 	}
 	defer resp.Body.Close()
 
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	// fmt.Printf("%s\n", data)
-
 	sr := &SignResp{}
-	err = json.Unmarshal(data, sr)
+	err = json.NewDecoder(resp.Body).Decode(sr)
 	if err != nil {
-		err = fmt.Errorf("Unmarshal error:%v, data: %s", err, string(data))
+		err = fmt.Errorf("Unmarshal error:%v", err)
 		return nil, err
 	}
 
@@ -122,8 +182,10 @@ func (client *Client) ListSignPost() (*ListSingnData, error) {
 		"midpost":     {"102"},
 		"accountpost": {client.LoginInfo.userName},
 	}
-	path := fmt.Sprintf("/snsapi/%s/attendance/list_signpost.json", client.LoginData.OrgInfoId)
-	req, err := client.newHttpReq("POST", path, form)
+	req, err := client.newHttpReq(
+		"POST",
+		"/attendance-signapi/clockdetail/sign/currentlist",
+		form)
 	if err != nil {
 		return nil, err
 	}

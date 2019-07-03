@@ -1,24 +1,24 @@
 package web
 
 import (
-	"github.com/kataras/iris"
+	"github.com/gin-gonic/gin"
 )
 
-func GetIrisApp() (app *iris.Application) {
-	app = iris.New()
+func GetApp() (app *gin.Engine) {
+	app = gin.New()
 
 	// query
-	app.Post("/api/user/{username}/login", UserWhiteList, UserLoginHander)
-	app.Get("/api/user/{username}/login", UserWhiteList, UserLoginCheckHander)
-	app.Post("/api/user/{username}/sign", UserWhiteList, UserSignHander)
-	app.Get("/api/user/{username}/sign", UserWhiteList, UserListSignHander)
-	app.Get("/api/user/{username}/sign/month/{year}/{month}", UserWhiteList, UserMonthSignHandler)
+	app.POST("/api/user/:username/login", UserWhiteList, UserLoginHander)
+	app.GET("/api/user/:username/login", UserWhiteList, UserLoginCheckHander)
+	app.POST("/api/user/:username/sign", UserWhiteList, UserSignHander)
+	app.GET("/api/user/:username/sign", UserWhiteList, UserListSignHander)
+	app.GET("/api/user/:username/sign/month/{year}/{month}", UserWhiteList, UserMonthSignHandler)
 
 	// notice
-	app.Get("/api/user/{username}/notice", UserWhiteList, NoticeHander)
+	app.GET("/api/user/:username/notice", UserWhiteList, NoticeHander)
 
 	// static web
-	app.StaticWeb("/html", DefaultCfg.StaticWebPath)
+	app.Static("/html", DefaultCfg.StaticWebPath)
 
 	return
 }

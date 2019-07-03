@@ -27,6 +27,18 @@ func TestListSign(t *testing.T) {
 		}
 
 		fmt.Printf("%+v\n", data)
+
+		if len(data.Signs) > 0 {
+			fmt.Printf("%+v\n", data.Signs[0])
+		}
+
+		//lat := fmt.Sprintf("%0.6f", 36.128+random.Float64()/1000)
+		//lng := fmt.Sprintf("%0.6f", 120.418+random.Float64()/1000)
+		//configId, err := client.signConfigId(lat, lng)
+		//if err != nil {
+		//	t.Fatal(err)
+		//}
+		//fmt.Printf("configId: %s\n", configId)
 	}
 }
 

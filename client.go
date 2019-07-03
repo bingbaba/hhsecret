@@ -1,7 +1,6 @@
 package hhsecret
 
 import (
-	"fmt"
 	"github.com/garyburd/go-oauth/oauth"
 	"net/http"
 	"net/url"
@@ -9,7 +8,7 @@ import (
 )
 
 var (
-	HOST_HDXT = "http://hdxt.haier.net/"
+	HOST_HDXT = "https://i.haier.net"
 )
 
 type Client struct {
@@ -55,13 +54,9 @@ func (client *Client) newHttpReq(method string, path string, form url.Values) (*
 		return nil, err
 	}
 
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
-	req.Header.Set("User-Agent",
-		fmt.Sprintf("deviceid:%s;os:Andorid;osversion:7.0;manufacturer:HUAWEIMHA;model:%s;network:WIFI;spn:;appversion:4.6.8(v312);screen:1920x1200;",
-			client.LoginInfo.devid,
-			client.LoginInfo.devtype,
-		),
-	)
+	req.Header.Set("Content-Type", "content-type: application/json; charset=utf-8")
+	req.Header.Set("User-Agent", client.LoginInfo.useragent)
+	req.Header.Set("opentoken", client.LoginData.Token)
 
 	return req, nil
 }
