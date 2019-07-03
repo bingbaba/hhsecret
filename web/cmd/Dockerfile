@@ -1,5 +1,13 @@
 FROM golang:1.12.6-alpine3.10 as build-env
 
+# repo
+RUN cp /etc/apk/repositories /etc/apk/repositories.bak
+RUN echo "http://mirrors.aliyun.com/alpine/v3.10/main/" > /etc/apk/repositories
+RUN echo "http://mirrors.aliyun.com/alpine/v3.10/community/" >> /etc/apk/repositories
+
+# git
+RUN apk update
+RUN apk add --no-cache git
 
 # move to GOPATH
 RUN mkdir -p /app
