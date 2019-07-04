@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -21,7 +22,7 @@ func init() {
 
 type SignConfigResp struct {
 	Success   bool         `json:"success"`
-	Error     string       `json:"errorMessage"`
+	Error     string       `json:"error"`
 	ErrorCode int          `json:"errorCode"`
 	Data      *SingnConfig `json:"data"`
 }
@@ -32,7 +33,7 @@ type SingnConfig struct {
 
 type SignResp struct {
 	Success   bool       `json:"success"`
-	Error     string     `json:"errorMessage"`
+	Error     string     `json:"error"`
 	ErrorCode int        `json:"errorCode"`
 	Data      *SingnData `json:"data"`
 }
@@ -142,13 +143,16 @@ func (client *Client) Sign() (*SingnData, error) {
 
 	// sign in
 	form := url.Values{
-		"bssid":    {client.LoginInfo.device.GetMac(client.LoginInfo.userName)},
-		"configId": {configId},
-		"lat":      {lat},
-		"lng":      {lng},
-		"userId":   {client.LoginData.OpenID},
-		"ssid":     {""},
+		"bssid":     {client.LoginInfo.device.GetMac(client.LoginInfo.userName)},
+		"configId":  {configId},
+		"lat":       {lat},
+		"lng":       {lng},
+		"userId":    {client.LoginData.OpenID},
+		"ssid":      {""},
+		"networkId": {client.LoginData.WbNetworkId},
 	}
+	log.Printf("%s", form.Encode())
+
 	req, err := client.newHttpReq(
 		"POST",
 		"/attendance-signapi/signservice/sign/signIn",
@@ -163,8 +167,15 @@ func (client *Client) Sign() (*SingnData, error) {
 	}
 	defer resp.Body.Close()
 
+	// read body
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
 	sr := &SignResp{}
-	err = json.NewDecoder(resp.Body).Decode(sr)
+	//err = json.NewDecoder(resp.Body).Decode(sr)
+	err = json.Unmarshal(data, sr)
 	if err != nil {
 		err = fmt.Errorf("Unmarshal error:%v", err)
 		return nil, err

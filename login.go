@@ -2,7 +2,6 @@ package hhsecret
 
 import (
 	"bytes"
-	"crypto/md5"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -66,10 +65,10 @@ type LoginData struct {
 }
 
 type LoginInfo struct {
-	userName  string
-	password  string
-	devid     string
-	device    *DeviceInfo
+	userName string
+	password string
+	//devid     string
+	device    DeviceInfo
 	useragent string
 }
 
@@ -81,14 +80,13 @@ func NewLoginInfo(username, password string) *LoginInfo {
 
 	password_encrypt_str := base64.StdEncoding.EncodeToString(password_encrypt)
 	dev_info := GetDeviceInfo(username)
-	useragent := dev_info.UserAgent()
+	useragent := dev_info.UserAgent(dev_info.DeviceId)
 	l := &LoginInfo{
 		userName:  username,
 		password:  password_encrypt_str,
 		device:    dev_info,
 		useragent: useragent,
 	}
-	l.setDevID()
 	return l
 }
 
@@ -126,10 +124,6 @@ func (l *LoginInfo) Do() (*LoginData, error) {
 func (l *LoginInfo) ToString() string {
 	return fmt.Sprintf(FMT_LOGININFO,
 		l.userName, l.password,
-		l.devid, l.device.Model,
+		l.device.DeviceId, l.device.Model,
 		l.useragent)
-}
-
-func (l *LoginInfo) setDevID() {
-	l.devid = fmt.Sprintf("%X", md5.Sum([]byte(l.userName)))
 }

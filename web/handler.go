@@ -91,7 +91,7 @@ func UserSignHander(ctx *gin.Context) {
 	username := ctx.Param("username")
 	defer func() {
 		if err != nil {
-			logger.Errorf("%s sign failed:", username, err)
+			logger.Errorf("%s sign failed: %v", username, err)
 		}
 		ctx.JSON(200, NewResponseWithErr(err, result))
 	}()

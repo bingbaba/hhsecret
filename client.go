@@ -54,8 +54,9 @@ func (client *Client) newHttpReq(method string, path string, form url.Values) (*
 		return nil, err
 	}
 
-	req.Header.Set("Content-Type", "content-type: application/json; charset=utf-8")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("User-Agent", client.LoginInfo.useragent)
+	//req.Header.Set("User-Agent", "38882/10.1.8(1050);Android 8.0.0;Xiaomi;MIX+2;102;1080*2030;deviceId:e4d14146-18a1-3442-a740-f907c13e0c7c;deviceName:Xiaomi MIX+2;clientId:38882;os:Android 8.0.0;brand:Xiaomi;model:MIX+2;deviceKey:99001021267878,865736035357535;oem:ihaier;lang:zh-CN;")
 	req.Header.Set("opentoken", client.LoginData.Token)
 
 	return req, nil

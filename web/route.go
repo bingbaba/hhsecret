@@ -6,6 +6,8 @@ import (
 
 func GetApp() (app *gin.Engine) {
 	app = gin.New()
+	app.Use(gin.Logger())
+	app.Use(gin.Recovery())
 
 	// query
 	app.POST("/api/user/:username/login", UserWhiteList, UserLoginHander)
