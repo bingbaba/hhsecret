@@ -14,7 +14,7 @@ func GetApp() (app *gin.Engine) {
 	app.GET("/api/user/:username/login", UserWhiteList, UserLoginCheckHander)
 	app.POST("/api/user/:username/sign", UserWhiteList, UserSignHander)
 	app.GET("/api/user/:username/sign", UserWhiteList, UserListSignHander)
-	app.GET("/api/user/:username/sign/month/{year}/{month}", UserWhiteList, UserMonthSignHandler)
+	app.GET("/api/user/:username/sign/month/:year/:month", UserWhiteList, UserMonthSignHandler)
 
 	// notice
 	app.GET("/api/user/:username/notice", UserWhiteList, NoticeHander)
