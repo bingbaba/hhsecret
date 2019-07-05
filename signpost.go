@@ -39,21 +39,13 @@ type SignResp struct {
 }
 
 type SingnData struct {
-	Id            string   `json:"id"`
-	AttendSetId   string   `json:"attendSetId"`
-	Datetime      int64    `json:"datetime"`
-	Longitude     float64  `json:"longitude"`
-	Latitude      float64  `json:"latitude"`
-	Featurename   string   `json:"featurename"`
-	Content       string   `json:"content"`
-	Status        int      `json:"status"`
-	MbShare       string   `json:"mbShare"`
-	PhotoIds      []string `json:"photoIds"`
-	ClockInType   string   `json:"clockInType"`
-	ExtraRemark   string   `json:"extraRemark"`
-	Systime       string   `json:"systime"`
-	MessageByTime string   `json:"messageByTime"`
-	Email         string   `json:"email"`
+	Id          string   `json:"id"`
+	Datetime    int64    `json:"time"`
+	Feature     string   `json:"feature"`
+	Content     string   `json:"content"`
+	PhotoIds    []string `json:"photoIds"`
+	ClockInType int      `json:"clockInType"`
+	PointId     int      `json:"pointId"`
 }
 
 type ListSignResp struct {
