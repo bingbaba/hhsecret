@@ -45,7 +45,7 @@ type SingnData struct {
 	Content     string   `json:"content"`
 	PhotoIds    []string `json:"photoIds"`
 	ClockInType int      `json:"clockInType"`
-	PointId     int      `json:"pointId"`
+	PointId     string   `json:"pointId"`
 }
 
 type ListSignResp struct {
