@@ -125,8 +125,8 @@ func (client *Client) Sign() (*SingnData, error) {
 	// lat=36.181592
 
 	// location
-	lat := fmt.Sprintf("%0.6f", 36.128+random.Float64()/1000)
-	lng := fmt.Sprintf("%0.6f", 120.418+random.Float64()/1000)
+	lat := fmt.Sprintf("%0.6f", 36.1276+random.Float64()/10000)
+	lng := fmt.Sprintf("%0.6f", 120.4187+random.Float64()/10000)
 
 	configId, err := client.signConfigId(lat, lng)
 	if err != nil {
