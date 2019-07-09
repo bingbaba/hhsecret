@@ -42,6 +42,7 @@ func GetDeviceInfo(username string) DeviceInfo {
 	idx, _ := strconv.Atoi(username[1:])
 
 	dev := Devices[idx%len(Devices)]
-	dev.DeviceId = fmt.Sprintf("%x", md5.Sum([]byte(username)))
+	devid := fmt.Sprintf("%x", md5.Sum([]byte(username)))
+	dev.DeviceId = fmt.Sprintf("%s-%s-%s-%s-%s", devid[:8], devid[8:12], devid[12:16], devid[16:20], devid[20:32])
 	return *dev
 }
