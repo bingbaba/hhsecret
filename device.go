@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	FMT_USERAGENT = "38882/10.1.8(1050);Android 8.0.0;%s;%s;102;%s;deviceId:%s;deviceName:%s %s;clientId:38882;os:Android 8.0.0;brand:%s;model:%s;oem:ihaier;lang:zh-CN;"
+	FMT_USERAGENT = "38882/10.2.0(1121);Android 8.0.0;%s;%s;102;%s;deviceId:%s;deviceName:%s %s;clientId:38882;os:Android 8.0.0;brand:%s;model:%s;oem:ihaier;lang:zh-CN;"
 	Devices       = []*DeviceInfo{
 		{"Huawei", "P30 Pro", "2430*1080", "b4:43:26", ""},
 		{"Oppo", "Reno", "2430*1080", "c4:e3:9f", ""},
