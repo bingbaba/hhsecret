@@ -1,4 +1,4 @@
-FROM golang:1.12.6-alpine3.10 as build-env
+FROM golang:1.13.5-alpine3.10 as build-env
 
 # repo
 RUN cp /etc/apk/repositories /etc/apk/repositories.bak
@@ -14,6 +14,7 @@ RUN mkdir -p /app
 WORKDIR /app
 
 # go mod
+ENV GOPROXY=https://goproxy.cn
 COPY go.mod .
 COPY go.sum .
 RUN go mod download
