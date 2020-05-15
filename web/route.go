@@ -9,15 +9,19 @@ func GetApp() (app *gin.Engine) {
 	app.Use(gin.Logger())
 	app.Use(gin.Recovery())
 
-	// query
-	app.POST("/api/user/:username/login", UserWhiteList, UserLoginHander)
-	app.GET("/api/user/:username/login", UserWhiteList, UserLoginCheckHander)
-	app.POST("/api/user/:username/sign", UserWhiteList, UserSignHander)
-	app.GET("/api/user/:username/sign", UserWhiteList, UserListSignHander)
-	app.GET("/api/user/:username/sign/month/:year/:month", UserWhiteList, UserMonthSignHandler)
+	// 用户API
+	userApi := app.Group("/api/user/:username", UserWhiteList)
+	{
+		// query
+		userApi.POST("/login", UserLoginHander)
+		userApi.GET("/login", UserLoginCheckHander)
+		userApi.POST("/sign", UserSignHander)
+		userApi.GET("/sign", UserListSignHander)
+		userApi.GET("/sign/month/:year/:month", UserMonthSignHandler)
 
-	// notice
-	app.GET("/api/user/:username/notice", UserWhiteList, NoticeHander)
+		// notice
+		userApi.GET("/notice", NoticeHander)
+	}
 
 	// static web
 	app.Static("/html", DefaultCfg.StaticWebPath)

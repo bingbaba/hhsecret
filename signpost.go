@@ -223,8 +223,8 @@ type MonthSign struct {
 }
 
 func GetMonthSign(username, year, month string) (*MonthSign, error) {
-	url_req := fmt.Sprintf("http://60.209.105.243:8081/ashx/rili.ashx?ty=%s&tm=%s&empnumber=%s", year, month, username)
-	resp, err := http.DefaultClient.Get(url_req)
+	url_req := fmt.Sprintf("https://hrit.haier.net:8899/ashx/rili.ashx?ty=%s&tm=%s&empnumber=%s", year, month, username)
+	resp, err := http.DefaultClient.Post(url_req, "application/json", nil)
 	if err != nil {
 		return nil, err
 	}
